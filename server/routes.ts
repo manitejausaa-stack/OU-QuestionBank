@@ -112,9 +112,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Paper not found" });
       }
 
-      const filePath = path.join(process.cwd(), paper.filePath);
+      // Use the file path directly since it's already absolute
+      const filePath = paper.filePath;
       
       if (!fs.existsSync(filePath)) {
+        console.error("File not found at path:", filePath);
         return res.status(404).json({ message: "File not found" });
       }
 
