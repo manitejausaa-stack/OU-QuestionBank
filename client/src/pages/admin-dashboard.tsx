@@ -30,13 +30,14 @@ export default function AdminDashboard() {
     }
   }, [isAuthenticated, isLoading, toast]);
 
-  const { data: stats } = useQuery({
+  const { data: stats, error: statsError } = useQuery({
     queryKey: ["/api/admin/stats"],
     retry: false,
     queryFn: async () => {
       const response = await fetch("/api/admin/stats", { credentials: "include" });
       if (!response.ok) {
         if (response.status === 401) throw new Error("401: Unauthorized");
+        if (response.status === 403) throw new Error("403: Access denied. Admin privileges required.");
         throw new Error("Failed to fetch stats");
       }
       return response.json();
@@ -55,6 +56,31 @@ export default function AdminDashboard() {
     return null; // Will redirect in useEffect
   }
 
+  // Check if user has admin access
+  if (statsError && statsError.message.includes("403")) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="max-w-md mx-auto text-center">
+          <div className="bg-white rounded-lg shadow-md p-8">
+            <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+              <Settings className="w-8 h-8 text-red-600" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
+            <p className="text-gray-600 mb-6">
+              You don't have administrator privileges to access this area. Only authorized personnel can access the admin dashboard.
+            </p>
+            <Button 
+              onClick={() => window.location.href = "/"}
+              className="bg-academic-blue text-white hover:bg-blue-700"
+            >
+              Return to Home
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation Header */}
@@ -63,20 +89,17 @@ export default function AdminDashboard() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <h1 className="text-2xl font-heading font-bold text-academic-blue">
-                  <GraduationCap className="inline mr-2" size={28} />
-                  UniPapers
-                </h1>
+                <button 
+                  onClick={() => window.location.href = "/"}
+                  className="text-2xl font-heading font-bold text-academic-blue flex items-center hover:text-blue-700 transition-colors"
+                >
+                  <img src="/assets/osmania-university-logo_1754939537313.png" alt="Osmania University Logo" className="w-8 h-8 mr-2" />
+                  OU QuestionBank Admin
+                </button>
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                onClick={() => window.location.href = "/"}
-                className="text-academic-medium hover:text-academic-blue font-medium"
-              >
-                Home
-              </Button>
+
               <Button
                 variant="ghost"
                 onClick={() => window.location.href = "/api/logout"}

@@ -59,27 +59,16 @@ export default function PublicHome() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <h1 className="text-2xl font-heading font-bold text-academic-blue flex items-center">
+                <button 
+                  onClick={() => window.location.href = "/"}
+                  className="text-2xl font-heading font-bold text-academic-blue flex items-center hover:text-blue-700 transition-colors"
+                >
                   <img src="/assets/osmania-university-logo_1754939537313.png" alt="Osmania University Logo" className="w-8 h-8 mr-2" />
                   OU QuestionBank
-                </h1>
+                </button>
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                className="text-academic-medium hover:text-academic-blue font-medium"
-              >
-                <span className="fas fa-home mr-1"></span>Home
-              </Button>
-              {!authLoading && !isAuthenticated && (
-                <Button
-                  onClick={() => window.location.href = "/api/login"}
-                  className="bg-academic-blue text-white hover:bg-blue-700"
-                >
-                  <span className="fas fa-user-shield mr-1"></span>Admin Login
-                </Button>
-              )}
               {!authLoading && isAuthenticated && (
                 <>
                   <Button

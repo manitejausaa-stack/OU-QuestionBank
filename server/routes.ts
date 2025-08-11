@@ -37,6 +37,31 @@ const upload = multer({
   },
 });
 
+// Admin access control middleware - only allow specific email
+const isAdmin = async (req: any, res: any, next: any) => {
+  try {
+    // First check if user is authenticated
+    await new Promise((resolve, reject) => {
+      isAuthenticated(req, res, (err: any) => {
+        if (err) reject(err);
+        else resolve(true);
+      });
+    });
+
+    // Check if user email matches the admin email
+    const userEmail = req.user?.claims?.email;
+    const adminEmail = "manitejausaa@gmail.com"; // Your admin email
+    
+    if (userEmail !== adminEmail) {
+      return res.status(403).json({ message: "Access denied. Admin privileges required." });
+    }
+    
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+};
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
@@ -135,7 +160,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Protected admin routes
-  app.post("/api/admin/papers", isAuthenticated, upload.single("file"), async (req: any, res) => {
+  app.post("/api/admin/papers", isAdmin, upload.single("file"), async (req: any, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ message: "No file uploaded" });
@@ -172,7 +197,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/admin/papers", isAuthenticated, async (req, res) => {
+  app.get("/api/admin/papers", isAdmin, async (req, res) => {
     try {
       const {
         course,
@@ -221,7 +246,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/admin/papers/:id", isAuthenticated, async (req, res) => {
+  app.delete("/api/admin/papers/:id", isAdmin, async (req, res) => {
     try {
       const { id } = req.params;
       const paper = await storage.getQuestionPaperById(id);
@@ -247,7 +272,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Stats endpoint for dashboard
-  app.get("/api/admin/stats", isAuthenticated, async (req, res) => {
+  app.get("/api/admin/stats", isAdmin, async (req, res) => {
     try {
       const [totalPapers] = await Promise.all([
         storage.getQuestionPapersCount(),

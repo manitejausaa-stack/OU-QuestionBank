@@ -1,12 +1,15 @@
-# Academic Question Paper Repository
+# OU QuestionBank - Academic Question Paper Repository
 
 ## Overview
 
-This is a full-stack web application for managing and sharing academic question papers. The system allows students and administrators to upload, search, filter, and download previous years' question papers from various courses and universities. It features a modern React frontend with a comprehensive UI component library and an Express.js backend with PostgreSQL database storage.
+This is a full-stack web application specifically designed for Osmania University students to access academic question papers. The system allows students to search, filter, and download previous years' question papers from OU courses (BSC, BCOM, BBA, BA) across 6 semesters and 3 academic years (2024-25, 2023-24, 2022-23). It features a modern React frontend with the official Osmania University branding and an Express.js backend with PostgreSQL database storage.
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Admin access restricted to: manitejausaa@gmail.com only
+Navigation preference: Logo/name should serve as home button, no separate home link needed
+Branding: Official Osmania University logo and "OU QuestionBank" name throughout interface
 
 ## System Architecture
 
@@ -36,8 +39,9 @@ Preferred communication style: Simple, everyday language.
 ### Authentication & Authorization
 - **Provider**: Replit OIDC integration for seamless authentication
 - **Session Strategy**: Server-side sessions with secure HTTP-only cookies
-- **Access Control**: Route-level protection for admin functions
+- **Access Control**: Restricted admin access to single authorized email (manitejausaa@gmail.com)
 - **User Profiles**: Automatic user creation/update from OIDC claims
+- **Admin Security**: Custom isAdmin middleware validates email-based access control
 
 ### File Management
 - **Upload Strategy**: Local filesystem storage with organized directory structure
@@ -47,9 +51,10 @@ Preferred communication style: Simple, everyday language.
 
 ### API Design
 - **Public Endpoints**: Question paper browsing and searching without authentication
-- **Protected Endpoints**: Admin upload, management, and statistics with authentication
+- **Protected Endpoints**: Admin upload, management, and statistics with email-restricted authentication
 - **RESTful Structure**: Consistent HTTP methods and response patterns
 - **Error Handling**: Centralized error middleware with proper status codes
+- **Admin Routes**: All `/api/admin/*` endpoints protected by isAdmin middleware (403 for non-authorized users)
 
 ## External Dependencies
 
