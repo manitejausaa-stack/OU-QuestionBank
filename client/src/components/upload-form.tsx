@@ -40,8 +40,6 @@ const semesters = [
   { value: "4", label: "Semester 4" },
   { value: "5", label: "Semester 5" },
   { value: "6", label: "Semester 6" },
-  { value: "7", label: "Semester 7" },
-  { value: "8", label: "Semester 8" },
 ];
 
 const academicYears = [

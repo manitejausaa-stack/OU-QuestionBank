@@ -244,7 +244,7 @@ export default function PublicHome() {
               <div className="bg-academic-accent text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <GraduationCap size={32} />
               </div>
-              <h4 className="text-3xl font-heading font-bold text-academic-dark mb-2">6</h4>
+              <h4 className="text-3xl font-heading font-bold text-academic-dark mb-2">4</h4>
               <p className="text-academic-medium">Courses</p>
             </div>
             <div className="text-center">
@@ -289,10 +289,10 @@ export default function PublicHome() {
             <div>
               <h4 className="text-lg font-heading font-semibold mb-4">Courses</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="text-gray-300 hover:text-white transition-colors">B.Tech Papers</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-white transition-colors">M.Tech Papers</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-white transition-colors">BCA/MCA Papers</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-white transition-colors">BBA/MBA Papers</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-colors">BSC Papers</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-colors">BCOM Papers</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-colors">BBA Papers</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-colors">BA Papers</a></li>
               </ul>
             </div>
           </div>
