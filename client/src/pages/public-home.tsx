@@ -59,9 +59,9 @@ export default function PublicHome() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <h1 className="text-2xl font-heading font-bold text-academic-blue">
-                  <GraduationCap className="inline mr-2" size={28} />
-                  UniPapers
+                <h1 className="text-2xl font-heading font-bold text-academic-blue flex items-center">
+                  <img src="/assets/osmania-university-logo_1754939537313.png" alt="Osmania University Logo" className="w-8 h-8 mr-2" />
+                  OU QuestionBank
                 </h1>
               </div>
             </div>
@@ -258,7 +258,7 @@ export default function PublicHome() {
               <div className="bg-purple-500 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Calendar size={32} />
               </div>
-              <h4 className="text-3xl font-heading font-bold text-academic-dark mb-2">5</h4>
+              <h4 className="text-3xl font-heading font-bold text-academic-dark mb-2">3</h4>
               <p className="text-academic-medium">Academic Years</p>
             </div>
           </div>
@@ -270,9 +270,9 @@ export default function PublicHome() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-xl font-heading font-semibold mb-4">
-                <GraduationCap className="inline mr-2" size={24} />
-                UniPapers
+              <h3 className="text-xl font-heading font-semibold mb-4 flex items-center">
+                <img src="/assets/osmania-university-logo_1754939537313.png" alt="Osmania University Logo" className="w-6 h-6 mr-2" />
+                OU QuestionBank
               </h3>
               <p className="text-gray-300 mb-4">
                 Your comprehensive academic resource for previous year question papers across all university courses and subjects.
@@ -297,7 +297,7 @@ export default function PublicHome() {
             </div>
           </div>
           <div className="border-t border-gray-700 mt-8 pt-8 text-center">
-            <p className="text-gray-400">&copy; 2024 UniPapers. All rights reserved. Academic Resource Platform.</p>
+            <p className="text-gray-400">&copy; 2024 OU QuestionBank. All rights reserved. Osmania University Academic Resource Platform.</p>
           </div>
         </div>
       </footer>

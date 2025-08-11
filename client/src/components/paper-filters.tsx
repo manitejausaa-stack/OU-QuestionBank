@@ -34,8 +34,6 @@ const academicYears = [
   { value: "2024-25", label: "2024-25" },
   { value: "2023-24", label: "2023-24" },
   { value: "2022-23", label: "2022-23" },
-  { value: "2021-22", label: "2021-22" },
-  { value: "2020-21", label: "2020-21" },
 ];
 
 export default function PaperFilters({ filters, onFiltersChange }: PaperFiltersProps) {
