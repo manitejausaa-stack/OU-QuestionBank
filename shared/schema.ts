@@ -62,7 +62,6 @@ export const insertUserSchema = createInsertSchema(users).omit({
 export const insertQuestionPaperSchema = createInsertSchema(questionPapers).omit({
   id: true,
   downloadCount: true,
-  uploadedBy: true,
   createdAt: true,
   updatedAt: true,
 });

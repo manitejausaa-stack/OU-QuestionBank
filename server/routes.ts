@@ -140,7 +140,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const userId = req.user.claims.sub;
-      const paperData = insertQuestionPaperSchema.parse(req.body);
+      
+      // Create a schema for just the form fields (excluding file fields)
+      const formFieldsSchema = insertQuestionPaperSchema.omit({
+        fileName: true,
+        filePath: true,
+        fileSize: true,
+        uploadedBy: true,
+      });
+      
+      const paperData = formFieldsSchema.parse(req.body);
 
       const paper = await storage.createQuestionPaper({
         ...paperData,
