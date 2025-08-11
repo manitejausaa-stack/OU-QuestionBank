@@ -11,21 +11,17 @@ import { isUnauthorizedError } from "@/lib/authUtils";
 
 const courses = [
   { value: "all", label: "All Courses" },
-  { value: "btech", label: "B.Tech" },
-  { value: "mtech", label: "M.Tech" },
-  { value: "bca", label: "BCA" },
-  { value: "mca", label: "MCA" },
+  { value: "bsc", label: "BSC" },
+  { value: "bcom", label: "BCOM" },
   { value: "bba", label: "BBA" },
-  { value: "mba", label: "MBA" },
+  { value: "ba", label: "BA" },
 ];
 
 const courseLabels: Record<string, string> = {
-  btech: "B.Tech",
-  mtech: "M.Tech",
-  bca: "BCA",
-  mca: "MCA",
+  bsc: "BSC",
+  bcom: "BCOM",
   bba: "BBA",
-  mba: "MBA",
+  ba: "BA",
 };
 
 export default function PapersTable() {

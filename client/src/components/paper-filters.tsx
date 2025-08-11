@@ -15,12 +15,10 @@ interface PaperFiltersProps {
 }
 
 const courses = [
-  { value: "btech", label: "B.Tech" },
-  { value: "mtech", label: "M.Tech" },
-  { value: "bca", label: "BCA" },
-  { value: "mca", label: "MCA" },
+  { value: "bsc", label: "BSC" },
+  { value: "bcom", label: "BCOM" },
   { value: "bba", label: "BBA" },
-  { value: "mba", label: "MBA" },
+  { value: "ba", label: "BA" },
 ];
 
 const semesters = [
