@@ -39,6 +39,7 @@ export function getSession() {
     cookie: {
       httpOnly: true,
       secure: true,
+ SameSite: 'None' as 'Lax', // Explicitly set SameSite to None for cross-origin cookies
       maxAge: sessionTtl,
     },
   });
