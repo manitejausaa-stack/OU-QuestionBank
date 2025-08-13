@@ -65,13 +65,16 @@ const isAdmin = async (req: any, res: any, next: any) => {
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
+  const adminEmail = "manitejausaa@gmail.com"; // Your admin email
 
   // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+  app.get('/api/auth/user', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      res.json(user);
+      if (req.session && req.session.isAdmin) {
+        res.json({ isAuthenticated: true, isAdmin: true });
+      } else {
+        res.status(401).json({ message: "Unauthorized" });
+      }
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
@@ -82,8 +85,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/login", async (req, res) => {
     const { email, password } = req.body;
     const adminEmail = "manitejausaa@gmail.com";
-    
-    if (email === adminEmail && bcrypt.compareSync(password, hashedAdminPassword)) {
+
+    if (email === adminEmail && await bcrypt.compare(password, hashedAdminPassword)) {
       (req.session as any).isAdmin = true; // Set admin session variable
       res.json({ message: "Admin login successful" });
     } else {
@@ -180,7 +183,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const userId = req.user.claims.sub;
-      
+
       // Create a schema for just the form fields (excluding file fields)
       const formFieldsSchema = insertQuestionPaperSchema.omit({
         fileName: true,
