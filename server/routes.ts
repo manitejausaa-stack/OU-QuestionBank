@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertQuestionPaperSchema } from "@shared/schema";
 import multer from "multer";
+import bcrypt from "bcrypt";
 import path from "path";
 import fs from "fs";
 
@@ -37,20 +38,18 @@ const upload = multer({
   },
 });
 
+const hashedAdminPassword = bcrypt.hashSync('password123', 10); // Replace 'password123' with a strong, unique password
+
 // Admin access control middleware - only allow specific email
 const isAdmin = async (req: any, res: any, next: any) => {
   try {
-    // First check if user is authenticated
-    await new Promise((resolve, reject) => {
-      isAuthenticated(req, res, (err: any) => {
-        if (err) reject(err);
-        else resolve(true);
-      });
-    });
+    // Check if admin session is set
+    if (!req.session || !req.session.isAdmin) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
     // Check if user email matches the admin email
-    const userEmail = req.user?.claims?.email;
-    const adminEmail = "manitejausaa@gmail.com"; // Your admin email
+    const adminEmail = "manitejausaa@gmail.com"; // Your admin email    
     
     if (userEmail !== adminEmail) {
       return res.status(403).json({ message: "Access denied. Admin privileges required." });
@@ -59,6 +58,7 @@ const isAdmin = async (req: any, res: any, next: any) => {
     next();
   } catch (error) {
     return res.status(401).json({ message: "Unauthorized" });
+
   }
 };
 
@@ -75,6 +75,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
+  // Admin login route
+  app.post("/api/admin/login", async (req, res) => {
+    const { email, password } = req.body;
+    const adminEmail = "manitejausaa@gmail.com";
+    
+    if (email === adminEmail && bcrypt.compareSync(password, hashedAdminPassword)) {
+      (req.session as any).isAdmin = true; // Set admin session variable
+      res.json({ message: "Admin login successful" });
+    } else {
+      res.status(401).json({ message: "Invalid credentials" });
     }
   });
 
