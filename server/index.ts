@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import cors from "cors";
 
 const app = express();
 app.use(express.json());
@@ -36,6 +37,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// Enable CORS for specified origins
+app.use(cors({
+  origin: ['https://5173-firebase-ou-questionbank-1755108889324.cluster-yylgzpipxrar4v4a72liastuqy.cloudworkstations.dev', 'https://question-compass.web.app'],
+  credentials: true
+}));
 (async () => {
   const server = await registerRoutes(app);
 
