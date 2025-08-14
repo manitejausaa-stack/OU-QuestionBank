@@ -1,5 +1,7 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
+const BACKEND_URL = "https://ou-questionbank.onrender.com";
+
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
     const text = (await res.text()) || res.statusText;
@@ -12,7 +14,9 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const res = await fetch(url, {
+  const isAbsoluteUrl = url.startsWith("http://") || url.startsWith("https://");
+  const requestUrl = isAbsoluteUrl ? url : `${BACKEND_URL}${url}`; // Keep the absolute check for flexibility
+  const res = await fetch(requestUrl, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
@@ -29,7 +33,10 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey.join("/") as string, {
+    const url = queryKey.join("/") as string;
+    const isAbsoluteUrl = url.startsWith("http://") || url.startsWith("https://");
+    const requestUrl = isAbsoluteUrl ? url : `${BACKEND_URL}/${url}`; // Keep the absolute check for flexibility
+    const res = await fetch(requestUrl, {
       credentials: "include",
     });
 

@@ -7,21 +7,21 @@ import { useAuth } from "@/hooks/useAuth";
 import NotFound from "@/pages/not-found";
 import PublicHome from "@/pages/public-home";
 import AdminDashboard from "@/pages/admin-dashboard";
+import AdminLoginPage from "./pages/AdminLoginPage";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
 
   return (
     <Switch>
+      <Route path="/admin/login" component={AdminLoginPage} />
+      <Route path="/admin" component={AdminDashboard} /> {/* Admin route is now always present */}
       {isLoading || !isAuthenticated ? (
         <Route path="/" component={PublicHome} />
+
       ) : (
-        <>
-          <Route path="/" component={PublicHome} />
-          <Route path="/admin" component={AdminDashboard} />
-        </>
+        <Route path="/" component={PublicHome} />
       )}
-      <Route component={NotFound} />
     </Switch>
   );
 }
@@ -36,5 +36,6 @@ function App() {
     </QueryClientProvider>
   );
 }
+
 
 export default App;

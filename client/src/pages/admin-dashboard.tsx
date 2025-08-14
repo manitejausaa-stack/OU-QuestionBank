@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { useToast } from "@/hooks/use-toast";
@@ -11,6 +12,7 @@ import UploadForm from "@/components/upload-form";
 import PapersTable from "@/components/papers-table";
 
 export default function AdminDashboard() {
+  const [, navigate] = useLocation();
   const { isAuthenticated, isLoading, user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -23,10 +25,10 @@ export default function AdminDashboard() {
         description: "You are logged out. Logging in again...",
         variant: "destructive",
       });
+      // Use wouter's navigate for client-side redirection
       setTimeout(() => {
-        window.location.href = "/api/login";
+        navigate('/admin/login');
       }, 500);
-      return;
     }
   }, [isAuthenticated, isLoading, toast]);
 
