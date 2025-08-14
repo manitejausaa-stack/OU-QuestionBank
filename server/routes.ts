@@ -1,12 +1,13 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth } from "./replitAuth";
 import { insertQuestionPaperSchema } from "@shared/schema";
 import multer from "multer";
 import bcrypt from "bcrypt";
 import path from "path";
 import fs from "fs";
+import jwt from "jsonwebtoken";
 
 // Configure multer for file uploads
 const uploadDir = path.join(process.cwd(), "uploads");
@@ -32,49 +33,43 @@ const upload = multer({
   fileFilter: (req, file, cb) => {
     if (file.mimetype === "application/pdf") {
       cb(null, true);
-    } else {
+    }
+    else {
       cb(new Error("Only PDF files are allowed"));
     }
   },
 });
 
-const hashedAdminPassword = bcrypt.hashSync('password123', 10); // Replace 'password123' with a strong, unique password
-
-// Admin access control middleware - only allow specific email
-const isAdmin = async (req: any, res: any, next: any) => {
-  try {
-    // Check if admin session is set
-    if (!req.session || !req.session.isAdmin) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    // Check if user email matches the admin email
-    const adminEmail = "manitejausaa@gmail.com"; // Your admin email    
-    
-    if (userEmail !== adminEmail) {
-      return res.status(403).json({ message: "Access denied. Admin privileges required." });
-    }
-    
-    next();
-  } catch (error) {
-    return res.status(401).json({ message: "Unauthorized" });
-
-  }
-};
-
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
-  const adminEmail = "manitejausaa@gmail.com"; // Your admin email
+  
+  // Secret key for signing and verifying JWTs (replace with a strong, unique key)
+  const jwtSecret = process.env.JWT_SECRET || 'your_super_secret_jwt_key'; // Use environment variable for production
+  const hashedAdminPassword = bcrypt.hashSync('password123', 10); // Replace 'password123' with a strong, unique password
+
+  const verifyAdminToken = (req: any, res: any, next: any) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (token == null) {
+      return res.sendStatus(401); // if there isn't any token
+    }
+
+    jwt.verify(token, jwtSecret as string, (err: any, user: any) => {
+      if (err) {
+        return res.sendStatus(403); // if token is no longer valid
+      }
+      req.user = user;
+      next();
+    });
+  };
 
   // Auth routes
-  app.get('/api/auth/user', async (req: any, res) => {
+  app.get('/api/auth/user', verifyAdminToken, async (req: any, res) => {
     try {
-      if (req.session && req.session.isAdmin) {
-        res.json({ isAuthenticated: true, isAdmin: true });
-      } else {
-        res.status(401).json({ message: "Unauthorized" });
-      }
+      // If we reach here, the token is valid and req.user contains the decoded payload
+      res.json({ isAuthenticated: true, isAdmin: req.user.isAdmin });
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
@@ -87,8 +82,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const adminEmail = "manitejausaa@gmail.com";
 
     if (email === adminEmail && await bcrypt.compare(password, hashedAdminPassword)) {
-      (req.session as any).isAdmin = true; // Set admin session variable
-      res.json({ message: "Admin login successful" });
+      // Generate JWT
+      const token = jwt.sign({ isAdmin: true }, jwtSecret, { expiresIn: '1h' }); // Token expires in 1 hour
+      
+      // Send token in response
+      res.json({ token, message: "Admin login successful" });
     } else {
       res.status(401).json({ message: "Invalid credentials" });
     }
@@ -176,7 +174,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Protected admin routes
-  app.post("/api/admin/papers", isAdmin, upload.single("file"), async (req: any, res) => {
+  app.post("/api/admin/papers", verifyAdminToken, upload.single("file"), async (req: any, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ message: "No file uploaded" });
@@ -213,7 +211,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/admin/papers", isAdmin, async (req, res) => {
+  app.get("/api/admin/papers", verifyAdminToken, async (req, res) => {
     try {
       const {
         course,
@@ -262,7 +260,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/admin/papers/:id", isAdmin, async (req, res) => {
+  app.delete("/api/admin/papers/:id", verifyAdminToken, async (req, res) => {
     try {
       const { id } = req.params;
       const paper = await storage.getQuestionPaperById(id);
@@ -288,7 +286,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Stats endpoint for dashboard
-  app.get("/api/admin/stats", isAdmin, async (req, res) => {
+  app.get("/api/admin/stats", verifyAdminToken, async (req, res) => {
     try {
       const [totalPapers] = await Promise.all([
         storage.getQuestionPapersCount(),
